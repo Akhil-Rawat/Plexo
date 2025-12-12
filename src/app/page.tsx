@@ -43,6 +43,13 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-load demo matches on first load if no matches exist
+  useEffect(() => {
+    if (!loading && matches.length === 0) {
+      handleSeedDemo();
+    }
+  }, [loading]);
+
   const loadMatches = async () => {
     try {
       const res = await fetch("/api/matches/list");
@@ -81,6 +88,21 @@ export default function Home() {
         router.push(`/match/${data.data.matchId}`);
       } else {
         alert(`Failed to create match: ${data.error}`);
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const handleSeedDemo = async () => {
+    try {
+      const res = await fetch("/api/seed", { method: "POST" });
+      const data: ApiResponse<{ matchId: string }> = await res.json();
+      if (data.success && data.data) {
+        alert("🎲 Demo match created! Check the lobby!");
+        loadMatches();
+      } else {
+        alert(`Failed to seed demo: ${data.error}`);
       }
     } catch (error: any) {
       alert(`Error: ${error.message}`);
@@ -173,8 +195,12 @@ export default function Home() {
                     >
                       Create Match
                     </Button>
-                    <Button variant="outline" size="xl">
-                      How It Works
+                    <Button 
+                      variant="secondary" 
+                      size="xl"
+                      onClick={handleSeedDemo}
+                    >
+                      Load Demo Match
                     </Button>
                   </motion.div>
                 </div>
@@ -234,9 +260,14 @@ export default function Home() {
               ) : matches.length === 0 ? (
                 <div className="text-center py-16 bg-dark-800/30 rounded-3xl border border-white/5">
                   <p className="text-gray-400 mb-4">No matches available</p>
-                  <Button onClick={handleCreateMatch} disabled={!publicKey}>
-                    Create First Match
-                  </Button>
+                  <div className="flex gap-4 justify-center">
+                    <Button onClick={handleSeedDemo} variant="primary">
+                      Load Demo Matches
+                    </Button>
+                    <Button onClick={handleCreateMatch} disabled={!publicKey} variant="outline">
+                      Create First Match
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

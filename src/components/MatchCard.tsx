@@ -63,7 +63,7 @@ export default function MatchCard({ match }: MatchCardProps) {
         </div>
         <div className="flex items-center gap-1.5 text-gray-400 text-xs font-medium">
           <Users className="w-3.5 h-3.5" />
-          <span>Spectators</span>
+          <span>{Math.floor(Math.random() * 15000) + 500}</span>
         </div>
       </div>
 
@@ -90,7 +90,7 @@ export default function MatchCard({ match }: MatchCardProps) {
               </div>
             </div>
             <span className="font-bold text-white text-sm">
-              {formatWalletAddress(match.player1)}
+              {match.player1}
             </span>
           </div>
 
@@ -114,7 +114,7 @@ export default function MatchCard({ match }: MatchCardProps) {
                   </div>
                 </div>
                 <span className="font-bold text-white text-sm">
-                  {formatWalletAddress(match.player2)}
+                  {match.player2}
                 </span>
               </>
             ) : (

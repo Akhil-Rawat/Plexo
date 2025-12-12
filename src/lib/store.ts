@@ -222,48 +222,124 @@ export const store = new InMemoryStore();
 
 // Helper to seed demo data
 export function seedDemoData() {
-  // Create a demo match
-  const demoMatch = store.createMatch({
-    player1: "Gn1abc...demo1",
-    player2: "Fv2xyz...demo2",
-    matchPubkey: "DEMO_MATCH_PUBKEY_123",
+  const matchIds: string[] = [];
+
+  // Match 1: High stakes championship
+  const match1 = store.createMatch({
+    player1: "CyberNinja",
+    player2: "NeonStriker",
+    matchPubkey: "DEMO_MATCH_1",
     metadata: {
-      title: "Demo Championship Match",
-      description: "Sample match for demonstration",
+      title: "🏆 Championship Finals",
+      description: "High stakes showdown!",
     },
   });
-
-  store.updateMatch(demoMatch.matchId, {
+  store.updateMatch(match1.matchId, {
     status: "LIVE",
-    lockTime: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+    lockTime: Math.floor(Date.now() / 1000) + 3600,
   });
+  // X | O | -
+  // - | X | -
+  // O | - | X
+  store.addMove(match1.matchId, { player: "player1", position: 4 });
+  store.addMove(match1.matchId, { player: "player2", position: 1 });
+  store.addMove(match1.matchId, { player: "player1", position: 0 });
+  store.addMove(match1.matchId, { player: "player2", position: 6 });
+  store.addMove(match1.matchId, { player: "player1", position: 8 });
+  store.createBet({ matchId: match1.matchId, wallet: "Whale1...AAA", prediction: "player1", amountLamports: 8_000_000_000 });
+  store.createBet({ matchId: match1.matchId, wallet: "Whale2...BBB", prediction: "player2", amountLamports: 4_000_000_000 });
+  store.createBet({ matchId: match1.matchId, wallet: "Trader...CCC", prediction: "player1", amountLamports: 2_450_000_000 });
+  matchIds.push(match1.matchId);
 
-  // Add some demo bets
-  store.createBet({
-    matchId: demoMatch.matchId,
-    wallet: "BetterA...111",
-    prediction: "player1",
-    amountLamports: 5_000_000_000, // 5 SOL
+  // Match 2: Scheduled match (betting open, not started)
+  const match2 = store.createMatch({
+    player1: "AlphaZero",
+    player2: "DeepMind",
+    matchPubkey: "DEMO_MATCH_2",
+    metadata: {
+      title: "🎮 AI Showdown",
+      description: "Battle of algorithms",
+    },
   });
-
-  store.createBet({
-    matchId: demoMatch.matchId,
-    wallet: "BetterB...222",
-    prediction: "player2",
-    amountLamports: 2_000_000_000, // 2 SOL
+  store.updateMatch(match2.matchId, {
+    status: "LIVE",
+    lockTime: Math.floor(Date.now() / 1000) + 7200,
   });
+  store.addMove(match2.matchId, { player: "player1", position: 4 });
+  store.createBet({ matchId: match2.matchId, wallet: "Bot1...DDD", prediction: "player1", amountLamports: 5_000_000_000 });
+  matchIds.push(match2.matchId);
 
-  store.createBet({
-    matchId: demoMatch.matchId,
-    wallet: "BetterC...333",
-    prediction: "player1",
-    amountLamports: 3_000_000_000, // 3 SOL
+  // Match 3: Intense mid-game
+  const match3 = store.createMatch({
+    player1: "PixelMaster",
+    player2: "VoxelQueen",
+    matchPubkey: "DEMO_MATCH_3",
+    metadata: {
+      title: "🔥 Ranked Battle",
+      description: "Competitive ranked match",
+    },
   });
+  store.updateMatch(match3.matchId, {
+    status: "LIVE",
+    lockTime: Math.floor(Date.now() / 1000) + 1800,
+  });
+  // O | - | O
+  // X | X | -
+  // - | O | -
+  store.addMove(match3.matchId, { player: "player2", position: 0 });
+  store.addMove(match3.matchId, { player: "player1", position: 3 });
+  store.addMove(match3.matchId, { player: "player2", position: 7 });
+  store.addMove(match3.matchId, { player: "player1", position: 4 });
+  store.addMove(match3.matchId, { player: "player2", position: 2 });
+  store.createBet({ matchId: match3.matchId, wallet: "Pro1...EEE", prediction: "player2", amountLamports: 3_500_000_000 });
+  store.createBet({ matchId: match3.matchId, wallet: "Pro2...FFF", prediction: "player1", amountLamports: 4_502_500_000 });
+  matchIds.push(match3.matchId);
 
-  // Add some moves
-  store.addMove(demoMatch.matchId, { player: "player1", position: 4 }); // Center
-  store.addMove(demoMatch.matchId, { player: "player2", position: 0 }); // Top-left
+  // Match 4: Mega pool
+  const match4 = store.createMatch({
+    player1: "GrandMasterX",
+    player2: "RookieKing",
+    matchPubkey: "DEMO_MATCH_4",
+    metadata: {
+      title: "💎 High Rollers Only",
+      description: "VIP exclusive match",
+    },
+  });
+  store.updateMatch(match4.matchId, {
+    status: "LIVE",
+    lockTime: Math.floor(Date.now() / 1000) + 5400,
+  });
+  store.addMove(match4.matchId, { player: "player1", position: 4 });
+  store.addMove(match4.matchId, { player: "player2", position: 0 });
+  store.createBet({ matchId: match4.matchId, wallet: "Diamond...GGG", prediction: "player1", amountLamports: 12_500_000_000 });
+  matchIds.push(match4.matchId);
 
-  console.log("Demo data seeded successfully");
-  return demoMatch.matchId;
+  // Match 5: Quick match
+  const match5 = store.createMatch({
+    player1: "SpeedDemon",
+    player2: "BlitzKing",
+    matchPubkey: "DEMO_MATCH_5",
+    metadata: {
+      title: "⚡ Speed Chess",
+      description: "Fast-paced action",
+    },
+  });
+  store.updateMatch(match5.matchId, {
+    status: "LIVE",
+    lockTime: Math.floor(Date.now() / 1000) + 900,
+  });
+  // X | X | O
+  // O | - | -
+  // - | - | -
+  store.addMove(match5.matchId, { player: "player1", position: 0 });
+  store.addMove(match5.matchId, { player: "player2", position: 3 });
+  store.addMove(match5.matchId, { player: "player1", position: 1 });
+  store.addMove(match5.matchId, { player: "player2", position: 2 });
+  store.createBet({ matchId: match5.matchId, wallet: "Speed1...HHH", prediction: "player1", amountLamports: 1_800_000_000 });
+  store.createBet({ matchId: match5.matchId, wallet: "Speed2...III", prediction: "player2", amountLamports: 2_200_000_000 });
+  store.createBet({ matchId: match5.matchId, wallet: "Speed3...JJJ", prediction: "player1", amountLamports: 1_500_000_000 });
+  matchIds.push(match5.matchId);
+
+  console.log(`🎲 Created ${matchIds.length} demo matches! Ready for betting!`);
+  return matchIds[0]; // Return first match ID
 }
