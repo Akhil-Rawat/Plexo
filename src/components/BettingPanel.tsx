@@ -1,5 +1,5 @@
 /**
- * BettingPanel Component
+ * BettingPanel Component (Premium Design)
  * UI for placing bets on match outcomes
  */
 
@@ -13,12 +13,10 @@ import {
   calculateOdds,
   formatWalletAddress,
 } from "@/lib/utils";
-import {
-  MIN_BET_LAMPORTS,
-  MAX_BET_LAMPORTS,
-  LAMPORTS_PER_SOL,
-} from "@/lib/constants";
+import { MIN_BET_LAMPORTS, MAX_BET_LAMPORTS } from "@/lib/constants";
 import type { Match, PlayerSide } from "@/types";
+import Button from "./Button";
+import { DollarSign, TrendingUp } from "lucide-react";
 
 interface BettingPanelProps {
   match: Match;
@@ -34,7 +32,7 @@ export default function BettingPanel({
   disabled = false,
 }: BettingPanelProps) {
   const [selectedSide, setSelectedSide] = useState<PlayerSide | null>(null);
-  const [betAmount, setBetAmount] = useState<string>("0.1");
+  const [betAmount, setBetAmount] = useState<number>(0.1);
   const [isPlacingBet, setIsPlacingBet] = useState(false);
 
   const { oddsPlayer1, oddsPlayer2 } = calculateOdds(
@@ -53,7 +51,7 @@ export default function BettingPanel({
   const handlePlaceBet = async () => {
     if (!canPlaceBet || !selectedSide) return;
 
-    const amountLamports = solToLamports(parseFloat(betAmount));
+    const amountLamports = solToLamports(betAmount);
 
     if (
       amountLamports < MIN_BET_LAMPORTS ||
@@ -70,7 +68,7 @@ export default function BettingPanel({
     setIsPlacingBet(true);
     try {
       await onPlaceBet(selectedSide, amountLamports);
-      setBetAmount("0.1");
+      setBetAmount(0.1);
       setSelectedSide(null);
     } catch (error: any) {
       alert(`Failed to place bet: ${error.message}`);
@@ -79,22 +77,27 @@ export default function BettingPanel({
     }
   };
 
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
-      <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Place Your Bet</h3>
+  const potentialPayout = selectedSide
+    ? betAmount * (selectedSide === "player1" ? oddsPlayer1 : oddsPlayer2)
+    : 0;
 
+  return (
+    <div className="flex flex-col gap-6 w-full">
+      {/* Header */}
+      <div>
+        <h3 className="text-2xl font-display font-bold text-white mb-2">
+          Place Your Bet
+        </h3>
         {isBettingClosed && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p className="text-sm text-red-800 font-medium">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-2">
+            <p className="text-sm text-red-400 font-medium">
               Betting is closed
             </p>
           </div>
         )}
-
         {!userWallet && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-            <p className="text-sm text-yellow-800 font-medium">
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+            <p className="text-sm text-yellow-400 font-medium">
               Connect wallet to place bets
             </p>
           </div>
@@ -102,26 +105,42 @@ export default function BettingPanel({
       </div>
 
       {/* Pool Stats */}
-      <div className="space-y-3">
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-600">Total Pool</span>
-          <span className="font-bold text-gray-900">
+      <div className="bg-dark-700/50 rounded-xl p-4 border border-white/5">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm text-gray-400">Total Pool</span>
+          <span className="text-lg font-bold text-white">
             {lamportsToSol(match.totalPool)} SOL
           </span>
         </div>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <div className="text-xs text-gray-500">P1 Pool</div>
+            <div className="text-sm font-bold text-secondary">
+              {lamportsToSol(match.poolPlayer1)} SOL
+            </div>
+          </div>
+          <div className="flex-1 text-right">
+            <div className="text-xs text-gray-500">P2 Pool</div>
+            <div className="text-sm font-bold text-primary">
+              {lamportsToSol(match.poolPlayer2)} SOL
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Player 1 Pool */}
+      {/* Odds Selection */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Player 1 */}
         <motion.button
           onClick={() => !isBettingClosed && setSelectedSide("player1")}
           disabled={isBettingClosed}
-          whileHover={!isBettingClosed ? { scale: 1.02 } : {}}
-          whileTap={!isBettingClosed ? { scale: 0.98 } : {}}
           className={`
-            w-full p-4 rounded-xl border-2 transition-all
+            relative flex flex-col items-center justify-center p-4 rounded-xl
+            bg-dark-700/50 border-2 transition-all duration-200
             ${
               selectedSide === "player1"
-                ? "border-primary-500 bg-primary-50"
-                : "border-gray-200 bg-gray-50 hover:border-primary-300"
+                ? "border-secondary bg-white/5 shadow-[0_0_15px_rgba(0,212,255,0.2)]"
+                : "border-white/5 hover:border-white/20"
             }
             ${
               isBettingClosed
@@ -129,41 +148,31 @@ export default function BettingPanel({
                 : "cursor-pointer"
             }
           `}
+          whileHover={!isBettingClosed ? { y: -2 } : {}}
+          whileTap={!isBettingClosed ? { scale: 0.98 } : {}}
         >
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-semibold text-gray-900">Player 1 (X)</span>
-            <span className="text-xs text-gray-500">
-              {formatWalletAddress(match.player1)}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Pool</span>
-            <span className="font-bold text-primary-600">
-              {lamportsToSol(match.poolPlayer1)} SOL
-            </span>
-          </div>
-          <div className="flex justify-between items-center mt-1">
-            <span className="text-xs text-gray-500">Odds</span>
-            <span className="text-xs font-medium text-gray-700">
-              {oddsPlayer1.toFixed(2)}x
-            </span>
-          </div>
+          <span className="text-xs text-gray-400 mb-1">Player 1 (X)</span>
+          <span className="text-2xl font-display font-bold text-white">
+            {oddsPlayer1.toFixed(2)}x
+          </span>
+          <span className="text-[10px] text-gray-500 mt-1">
+            {formatWalletAddress(match.player1)}
+          </span>
         </motion.button>
 
-        {/* Player 2 Pool */}
+        {/* Player 2 */}
         <motion.button
           onClick={() =>
             !isBettingClosed && match.player2 && setSelectedSide("player2")
           }
           disabled={isBettingClosed || !match.player2}
-          whileHover={!isBettingClosed && match.player2 ? { scale: 1.02 } : {}}
-          whileTap={!isBettingClosed && match.player2 ? { scale: 0.98 } : {}}
           className={`
-            w-full p-4 rounded-xl border-2 transition-all
+            relative flex flex-col items-center justify-center p-4 rounded-xl
+            bg-dark-700/50 border-2 transition-all duration-200
             ${
               selectedSide === "player2"
-                ? "border-danger-500 bg-danger-50"
-                : "border-gray-200 bg-gray-50 hover:border-danger-300"
+                ? "border-primary bg-white/5 shadow-[0_0_15px_rgba(107,70,255,0.2)]"
+                : "border-white/5 hover:border-white/20"
             }
             ${
               isBettingClosed || !match.player2
@@ -171,86 +180,92 @@ export default function BettingPanel({
                 : "cursor-pointer"
             }
           `}
+          whileHover={!isBettingClosed && match.player2 ? { y: -2 } : {}}
+          whileTap={!isBettingClosed && match.player2 ? { scale: 0.98 } : {}}
         >
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-semibold text-gray-900">Player 2 (O)</span>
-            <span className="text-xs text-gray-500">
-              {match.player2
-                ? formatWalletAddress(match.player2)
-                : "Waiting..."}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Pool</span>
-            <span className="font-bold text-danger-500">
-              {lamportsToSol(match.poolPlayer2)} SOL
-            </span>
-          </div>
-          <div className="flex justify-between items-center mt-1">
-            <span className="text-xs text-gray-500">Odds</span>
-            <span className="text-xs font-medium text-gray-700">
-              {oddsPlayer2.toFixed(2)}x
-            </span>
-          </div>
+          <span className="text-xs text-gray-400 mb-1">Player 2 (O)</span>
+          <span className="text-2xl font-display font-bold text-white">
+            {oddsPlayer2.toFixed(2)}x
+          </span>
+          <span className="text-[10px] text-gray-500 mt-1">
+            {match.player2 ? formatWalletAddress(match.player2) : "Waiting..."}
+          </span>
         </motion.button>
       </div>
 
-      {/* Bet Amount Input */}
+      {/* Amount Slider */}
       {selectedSide && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="space-y-3"
+          className="space-y-4"
         >
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Bet Amount (SOL)
-            </label>
-            <input
-              type="number"
-              value={betAmount}
-              onChange={(e) => setBetAmount(e.target.value)}
-              min={lamportsToSol(MIN_BET_LAMPORTS)}
-              max={lamportsToSol(MAX_BET_LAMPORTS)}
-              step="0.01"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-lg font-semibold"
-              disabled={isPlacingBet}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Min: {lamportsToSol(MIN_BET_LAMPORTS)} SOL • Max:{" "}
-              {lamportsToSol(MAX_BET_LAMPORTS)} SOL
-            </p>
+            <div className="flex justify-between text-sm font-medium mb-3">
+              <span className="text-gray-400">Wager Amount</span>
+              <span className="text-white">{betAmount.toFixed(2)} SOL</span>
+            </div>
+            <div className="relative h-2 bg-dark-600 rounded-full overflow-hidden">
+              <div
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-secondary"
+                style={{
+                  width: `${
+                    (betAmount / Number(lamportsToSol(MAX_BET_LAMPORTS))) * 100
+                  }%`,
+                }}
+              />
+              <input
+                type="range"
+                min={lamportsToSol(MIN_BET_LAMPORTS)}
+                max={lamportsToSol(MAX_BET_LAMPORTS)}
+                step="0.01"
+                value={betAmount}
+                onChange={(e) => setBetAmount(Number(e.target.value))}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={isPlacingBet}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <span>{lamportsToSol(MIN_BET_LAMPORTS)} SOL</span>
+              <span>{lamportsToSol(MAX_BET_LAMPORTS / 2)} SOL</span>
+              <span>{lamportsToSol(MAX_BET_LAMPORTS)} SOL</span>
+            </div>
           </div>
 
-          <motion.button
-            onClick={handlePlaceBet}
+          {/* Potential Return */}
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+            <div className="flex items-center gap-2 text-gray-300">
+              <TrendingUp className="w-5 h-5 text-accent" />
+              <span>Potential Payout</span>
+            </div>
+            <span className="text-2xl font-display font-bold text-accent">
+              {potentialPayout.toFixed(2)} SOL
+            </span>
+          </div>
+
+          {/* Place Bet Button */}
+          <Button
+            variant="primary"
+            fullWidth
+            size="lg"
+            icon={<DollarSign className="w-5 h-5" />}
             disabled={!canPlaceBet || isPlacingBet}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`
-              w-full py-4 rounded-xl font-bold text-white text-lg
-              transition-all shadow-lg
-              ${
-                canPlaceBet && !isPlacingBet
-                  ? "bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
-                  : "bg-gray-400 cursor-not-allowed"
-              }
-            `}
+            onClick={handlePlaceBet}
+            className={
+              !canPlaceBet || isPlacingBet
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }
           >
-            {isPlacingBet
-              ? "Placing Bet..."
-              : `Bet ${betAmount} SOL on ${
-                  selectedSide === "player1" ? "Player 1" : "Player 2"
-                }`}
-          </motion.button>
+            {isPlacingBet ? "Placing..." : `Bet ${betAmount.toFixed(2)} SOL`}
+          </Button>
+
+          {/* Platform Fee */}
+          <div className="text-xs text-gray-500 text-center pt-2 border-t border-white/5">
+            2% platform fee applies to all payouts
+          </div>
         </motion.div>
       )}
-
-      {/* Platform Fee Notice */}
-      <div className="text-xs text-gray-500 text-center pt-2 border-t border-gray-200">
-        2% platform fee applies to all payouts
-      </div>
     </div>
   );
 }

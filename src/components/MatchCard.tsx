@@ -1,6 +1,6 @@
 /**
  * MatchCard Component
- * Display card for match in lobby/list view
+ * Display card for match in lobby/list view (Premium Design)
  */
 
 "use client";
@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 import { lamportsToSol, formatWalletAddress } from "@/lib/utils";
 import { MATCH_STATUSES } from "@/lib/constants";
 import type { Match } from "@/types";
+import Card from "./Card";
+import { Users, Timer } from "lucide-react";
+import GameBoard from "./GameBoard";
 
 interface MatchCardProps {
   match: Match;
@@ -18,6 +21,7 @@ interface MatchCardProps {
 export default function MatchCard({ match }: MatchCardProps) {
   const router = useRouter();
   const statusConfig = MATCH_STATUSES[match.status];
+  const isLive = match.status === "LIVE";
 
   const handleClick = () => {
     router.push(`/match/${match.matchId}`);
@@ -29,105 +33,158 @@ export default function MatchCard({ match }: MatchCardProps) {
   };
 
   return (
-    <motion.div
+    <Card
+      className="flex flex-col h-full cursor-pointer"
+      hoverEffect
+      noPadding
       onClick={handleClick}
-      whileHover={{ scale: 1.02, y: -4 }}
-      whileTap={{ scale: 0.98 }}
-      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all"
     >
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="font-bold text-lg text-gray-900">
-            {match.metadata?.title || "Tic-Tac-Toe Match"}
-          </h3>
-          {match.metadata?.description && (
-            <p className="text-sm text-gray-600 mt-1">
-              {match.metadata.description}
-            </p>
+      <div className="p-6 pb-4 border-b border-white/5 flex justify-between items-center bg-dark-700/30">
+        <div className="flex items-center gap-2">
+          {isLive ? (
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-bold border border-red-500/30">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+              LIVE
+            </span>
+          ) : (
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-bold ${statusConfig.color}`}
+            >
+              {statusConfig.label}
+            </span>
           )}
-        </div>
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${statusConfig.color}`}
-        >
-          {statusConfig.label}
-        </span>
-      </div>
-
-      {/* Players */}
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Player 1 (X):</span>
-          <span className="text-sm font-mono font-semibold text-gray-900">
-            {formatWalletAddress(match.player1)}
+          <span className="text-xs text-gray-400 font-medium ml-2">
+            Match #{match.matchId.slice(0, 8)}
           </span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Player 2 (O):</span>
-          <span className="text-sm font-mono font-semibold text-gray-900">
+        <div className="flex items-center gap-1.5 text-gray-400 text-xs font-medium">
+          <Users className="w-3.5 h-3.5" />
+          <span>Spectators</span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-6 flex-1 flex flex-col gap-6">
+        {/* Title */}
+        {match.metadata?.title && (
+          <h3 className="text-lg font-bold text-white">
+            {match.metadata.title}
+          </h3>
+        )}
+
+        {/* Players */}
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-secondary/20 to-secondary border-2 border-secondary flex items-center justify-center">
+                <span className="text-xs font-mono text-secondary">
+                  {formatWalletAddress(match.player1).slice(0, 4)}
+                </span>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-secondary text-dark-900 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">
+                X
+              </div>
+            </div>
+            <span className="font-bold text-white text-sm">
+              {formatWalletAddress(match.player1)}
+            </span>
+          </div>
+
+          <div className="text-center">
+            <span className="text-2xl font-display font-bold text-white/20">
+              VS
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
             {match.player2 ? (
-              formatWalletAddress(match.player2)
+              <>
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-primary border-2 border-primary flex items-center justify-center">
+                    <span className="text-xs font-mono text-primary">
+                      {formatWalletAddress(match.player2).slice(0, 4)}
+                    </span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs shadow-lg">
+                    O
+                  </div>
+                </div>
+                <span className="font-bold text-white text-sm">
+                  {formatWalletAddress(match.player2)}
+                </span>
+              </>
             ) : (
-              <span className="text-gray-400 italic">Waiting...</span>
+              <>
+                <div className="w-16 h-16 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+                  <Timer className="w-6 h-6 text-white/40" />
+                </div>
+                <span className="text-sm text-gray-400 italic">Waiting...</span>
+              </>
             )}
-          </span>
+          </div>
+        </div>
+
+        {/* Pool Info */}
+        <div className="mt-auto">
+          <div className="flex justify-between items-end mb-2">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">
+              Total Pool
+            </span>
+            <span className="text-xl font-display font-bold text-white flex items-center gap-1">
+              <span className="text-accent">◎</span>
+              {lamportsToSol(match.totalPool)}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+            <div>
+              <span className="text-gray-500">P1 Pool: </span>
+              <span className="text-secondary font-bold">
+                {lamportsToSol(match.poolPlayer1)} SOL
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="text-gray-500">P2 Pool: </span>
+              <span className="text-primary font-bold">
+                {lamportsToSol(match.poolPlayer2)} SOL
+              </span>
+            </div>
+          </div>
+          <div className="w-full bg-dark-600 h-1.5 rounded-full overflow-hidden">
+            <div
+              className="bg-accent h-full transition-all"
+              style={{
+                width: `${(match.poolPlayer1 / (match.totalPool || 1)) * 100}%`,
+              }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Pool Stats */}
-      <div className="bg-gradient-to-r from-primary-50 to-danger-50 rounded-xl p-4 mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-semibold text-gray-700">
-            Total Pool
-          </span>
-          <span className="text-lg font-bold text-gray-900">
-            {lamportsToSol(match.totalPool)} SOL
-          </span>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <div className="text-xs text-gray-600">P1 Pool</div>
-            <div className="text-sm font-bold text-primary-600">
-              {lamportsToSol(match.poolPlayer1)} SOL
-            </div>
-          </div>
-          <div className="flex-1">
-            <div className="text-xs text-gray-600">P2 Pool</div>
-            <div className="text-sm font-bold text-danger-500">
-              {lamportsToSol(match.poolPlayer2)} SOL
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="flex gap-2">
-        {match.status === "PENDING" && !match.player2 && (
+      {/* Action */}
+      <div className="p-4 pt-0">
+        {!match.player2 && match.status === "PENDING" ? (
           <motion.button
             onClick={handleJoin}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex-1 bg-gradient-to-r from-success-500 to-success-600 text-white font-bold py-2 px-4 rounded-lg hover:from-success-600 hover:to-success-700 transition-all"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-primary to-secondary text-white hover:shadow-[0_0_20px_rgba(107,70,255,0.5)] transition-all"
           >
-            Join Match
+            Join as Player 2
+          </motion.button>
+        ) : (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-3 rounded-xl font-bold text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors"
+          >
+            {isLive ? "Watch & Bet" : "View Details"}
           </motion.button>
         )}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex-1 bg-primary-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition-all"
-        >
-          {match.status === "PENDING" && !match.player2
-            ? "View"
-            : "Watch & Bet"}
-        </motion.button>
       </div>
-
-      {/* Match Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-xs text-gray-500">
-        <span>{match.moves.length} moves</span>
-        <span>Created {new Date(match.createdAt).toLocaleDateString()}</span>
-      </div>
-    </motion.div>
+    </Card>
   );
 }

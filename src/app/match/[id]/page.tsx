@@ -1,5 +1,5 @@
 /**
- * Match Detail Page
+ * Match Detail Page (Premium Design)
  * Game board, betting panel, and admin controls
  */
 
@@ -15,6 +15,8 @@ import TicTacToeBoard from "@/components/TicTacToeBoard";
 import BettingPanel from "@/components/BettingPanel";
 import AdminControls from "@/components/AdminControls";
 import TxToast from "@/components/TxToast";
+import Card from "@/components/Card";
+import Button from "@/components/Button";
 import {
   getCurrentTurn,
   checkWinner,
@@ -29,6 +31,7 @@ import type {
   Transaction,
   ApiResponse,
 } from "@/types";
+import { ArrowLeft, Users, Trophy } from "lucide-react";
 
 export default function MatchPage() {
   const params = useParams();
@@ -66,7 +69,7 @@ export default function MatchPage() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Failed to load match:", error);
+      console.error("Failed to load match:");
     } finally {
       setLoading(false);
     }
@@ -288,10 +291,10 @@ export default function MatchPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600 mt-4">Loading match...</p>
+          <div className="inline-block w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-400 mt-4">Loading match...</p>
         </div>
       </div>
     );
@@ -299,15 +302,12 @@ export default function MatchPage() {
 
   if (!match) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-900 mb-4">Match not found</p>
-          <button
-            onClick={() => router.push("/")}
-            className="text-primary-600 hover:text-primary-700 font-semibold"
-          >
+          <p className="text-xl text-white mb-4">Match not found</p>
+          <Button onClick={() => router.push("/")} variant="outline">
             ← Back to lobby
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -320,17 +320,18 @@ export default function MatchPage() {
   const isPlayer = userSide !== null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-dark-900 text-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-dark-800/50 backdrop-blur-xl border-b border-white/5 sticky top-0 z-40">
         <div className="container-custom py-4">
           <div className="flex justify-between items-center">
-            <button
+            <Button
               onClick={() => router.push("/")}
-              className="text-gray-600 hover:text-gray-900 font-semibold"
+              variant="ghost"
+              icon={<ArrowLeft className="w-5 h-5" />}
             >
-              ← Back to Lobby
-            </button>
+              Back to Lobby
+            </Button>
             <WalletMultiButton />
           </div>
         </div>
@@ -339,22 +340,30 @@ export default function MatchPage() {
       {/* Main Content */}
       <div className="container-custom py-8">
         {/* Match Status Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`rounded-2xl p-6 mb-8 ${statusConfig.color}`}
-        >
+        <Card className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">
-                {match.metadata?.title || "Tic-Tac-Toe Match"}
-              </h2>
-              <p className="text-sm mt-1">{statusConfig.label}</p>
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-2xl font-display font-bold text-white">
+                  {match.metadata?.title || "Tic-Tac-Toe Match"}
+                </h2>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold ${statusConfig.color}`}
+                >
+                  {statusConfig.label}
+                </span>
+              </div>
+              <p className="text-sm text-gray-400">
+                Match ID: {matchId.slice(0, 16)}...
+              </p>
             </div>
             {winner && (
               <div className="text-right">
-                <p className="text-sm">Winner</p>
-                <p className="text-2xl font-bold">
+                <div className="flex items-center gap-2 text-accent">
+                  <Trophy className="w-6 h-6" />
+                  <span className="text-sm">Winner</span>
+                </div>
+                <p className="text-2xl font-bold text-white mt-1">
                   {winner === "draw"
                     ? "Draw!"
                     : winner === "player1"
@@ -364,40 +373,41 @@ export default function MatchPage() {
               </div>
             )}
           </div>
-        </motion.div>
+        </Card>
 
         {/* Game Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Game Board */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <Card>
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Users className="w-6 h-6 text-primary" />
                   Game Board
                 </h3>
 
                 {/* Players Info */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-primary-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-600 mb-1">Player 1 (X)</p>
-                    <p className="font-mono text-sm font-semibold">
+                  <div className="bg-secondary/10 border border-secondary/20 rounded-xl p-4">
+                    <p className="text-xs text-gray-400 mb-1">Player 1 (X)</p>
+                    <p className="font-mono text-sm font-semibold text-secondary">
                       {formatWalletAddress(match.player1)}
                     </p>
                     {userSide === "player1" && (
-                      <span className="text-xs text-primary-600 font-semibold">
+                      <span className="text-xs text-secondary font-bold mt-1 inline-block">
                         You
                       </span>
                     )}
                   </div>
-                  <div className="bg-danger-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-600 mb-1">Player 2 (O)</p>
-                    <p className="font-mono text-sm font-semibold">
+                  <div className="bg-primary/10 border border-primary/20 rounded-xl p-4">
+                    <p className="text-xs text-gray-400 mb-1">Player 2 (O)</p>
+                    <p className="font-mono text-sm font-semibold text-primary">
                       {match.player2
                         ? formatWalletAddress(match.player2)
                         : "Waiting..."}
                     </p>
                     {userSide === "player2" && (
-                      <span className="text-xs text-danger-600 font-semibold">
+                      <span className="text-xs text-primary font-bold mt-1 inline-block">
                         You
                       </span>
                     )}
@@ -422,14 +432,14 @@ export default function MatchPage() {
                 !match.player2 &&
                 !isPlayer &&
                 publicKey && (
-                  <motion.button
+                  <Button
                     onClick={handleJoinMatch}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full mt-6 bg-gradient-to-r from-success-500 to-success-600 text-white font-bold py-4 rounded-2xl shadow-lg"
+                    fullWidth
+                    size="lg"
+                    className="mt-6"
                   >
                     Join as Player 2
-                  </motion.button>
+                  </Button>
                 )}
 
               {/* Claim Payout Button */}
@@ -438,16 +448,11 @@ export default function MatchPage() {
                 match.winner !== "draw" &&
                 !isPlayer &&
                 publicKey && (
-                  <motion.button
-                    onClick={handleClaimPayout}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full mt-6 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 rounded-2xl shadow-lg"
-                  >
+                  <Button onClick={handleClaimPayout} fullWidth size="lg">
                     Claim Payout
-                  </motion.button>
+                  </Button>
                 )}
-            </div>
+            </Card>
 
             {/* Admin Controls */}
             {publicKey && (
@@ -461,33 +466,45 @@ export default function MatchPage() {
 
           {/* Right Column: Betting Panel */}
           <div className="space-y-6">
-            <BettingPanel
-              match={match}
-              userWallet={publicKey?.toBase58()}
-              onPlaceBet={handlePlaceBet}
-              disabled={isPlayer}
-            />
+            <Card>
+              <BettingPanel
+                match={match}
+                userWallet={publicKey?.toBase58()}
+                onPlaceBet={handlePlaceBet}
+                disabled={isPlayer}
+              />
+            </Card>
 
             {/* Match Info Card */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h4 className="font-bold text-gray-900 mb-3">Match Info</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Match ID:</span>
-                  <span className="font-mono text-xs">
-                    {match.matchId.slice(0, 8)}...
+            <Card>
+              <h4 className="font-bold text-white mb-4">Match Stats</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Match ID:</span>
+                  <span className="font-mono text-xs text-gray-300">
+                    {match.matchId.slice(0, 12)}...
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Moves:</span>
-                  <span className="font-semibold">{match.moves.length}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Total Moves:</span>
+                  <span className="font-semibold text-white">
+                    {match.moves.length} / 9
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Created:</span>
-                  <span>{new Date(match.createdAt).toLocaleString()}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Total Pool:</span>
+                  <span className="font-semibold text-accent">
+                    {lamportsToSol(match.totalPool)} SOL
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Created:</span>
+                  <span className="text-gray-300 text-xs">
+                    {new Date(match.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

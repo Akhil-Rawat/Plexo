@@ -6,14 +6,66 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap");
+
 @layer base {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 10, 14, 39;
+    --background-end-rgb: 10, 14, 39;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply text-white antialiased;
+    background: rgb(var(--background-start-rgb));
+    overflow-x: hidden;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0e27;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2d3455;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #6b46ff;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgba(107, 70, 255, 0.3);
+    color: white;
   }
 }
 
 @layer components {
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Noise Texture Overlay */
+  .bg-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }
