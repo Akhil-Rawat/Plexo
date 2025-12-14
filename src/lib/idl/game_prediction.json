@@ -1,4 +1,10 @@
 {
+    "address": "DJzMFANyRmYriK61eXx7CkSUfHhmXsyTnHzWmxhRAQt9",
+    "metadata": {
+        "name": "game_prediction",
+        "version": "0.1.0",
+        "spec": "0.1.0"
+    },
     "version": "0.1.0",
     "name": "game_prediction",
     "instructions": [
