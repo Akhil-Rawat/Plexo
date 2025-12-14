@@ -230,13 +230,13 @@ export class PredictionPoolClient {
    * Fetch pool account data
    */
   async getPool(poolPda: PublicKey) {
-    return await this.program.account.pool.fetch(poolPda);
+    return await (this.program.account as any).pool.fetch(poolPda);
   }
 
   /**
    * Fetch bet account data
    */
   async getBet(betPda: PublicKey) {
-    return await this.program.account.bet.fetch(betPda);
+    return await (this.program.account as any).bet.fetch(betPda);
   }
 }
