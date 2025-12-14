@@ -3,10 +3,9 @@
  * Integrates the prediction_pool Anchor program with Plexo frontend
  */
 
-import { AnchorProvider, Program, web3, BN } from "@coral-xyz/anchor";
+import { AnchorProvider, Program, web3, BN, Idl } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, Connection } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import type { GamePrediction } from "./types/game_prediction";
 import IDL from "./idl/game_prediction.json";
 
 const PROGRAM_ID = new PublicKey(
@@ -14,14 +13,14 @@ const PROGRAM_ID = new PublicKey(
 );
 
 export class PredictionPoolClient {
-  program: Program<GamePrediction>;
+  program: Program;
   provider: AnchorProvider;
 
   constructor(connection: Connection, wallet: any) {
     this.provider = new AnchorProvider(connection, wallet, {
       commitment: "confirmed",
     });
-    this.program = new Program(IDL as any, PROGRAM_ID, this.provider);
+    this.program = new Program(IDL as Idl, PROGRAM_ID, this.provider);
   }
 
   /**
