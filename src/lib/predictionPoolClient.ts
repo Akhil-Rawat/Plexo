@@ -20,7 +20,7 @@ export class PredictionPoolClient {
     this.provider = new AnchorProvider(connection, wallet, {
       commitment: "confirmed",
     });
-    this.program = new Program(IDL as Idl, PROGRAM_ID, this.provider);
+    this.program = new Program(IDL as Idl, this.provider);
   }
 
   /**
