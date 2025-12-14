@@ -20,7 +20,8 @@ import type { Match, ApiResponse } from "@/types";
 import { Menu, Play, TrendingUp } from "lucide-react";
 
 const WalletMultiButton = dynamic(
-  async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
 
@@ -195,8 +196,8 @@ export default function Home() {
                     >
                       Create Match
                     </Button>
-                    <Button 
-                      variant="secondary" 
+                    <Button
+                      variant="secondary"
                       size="xl"
                       onClick={handleSeedDemo}
                     >
@@ -264,7 +265,11 @@ export default function Home() {
                     <Button onClick={handleSeedDemo} variant="primary">
                       Load Demo Matches
                     </Button>
-                    <Button onClick={handleCreateMatch} disabled={!publicKey} variant="outline">
+                    <Button
+                      onClick={handleCreateMatch}
+                      disabled={!publicKey}
+                      variant="outline"
+                    >
                       Create First Match
                     </Button>
                   </div>

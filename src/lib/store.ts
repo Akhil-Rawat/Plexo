@@ -246,9 +246,24 @@ export function seedDemoData() {
   store.addMove(match1.matchId, { player: "player1", position: 0 });
   store.addMove(match1.matchId, { player: "player2", position: 6 });
   store.addMove(match1.matchId, { player: "player1", position: 8 });
-  store.createBet({ matchId: match1.matchId, wallet: "Whale1...AAA", prediction: "player1", amountLamports: 8_000_000_000 });
-  store.createBet({ matchId: match1.matchId, wallet: "Whale2...BBB", prediction: "player2", amountLamports: 4_000_000_000 });
-  store.createBet({ matchId: match1.matchId, wallet: "Trader...CCC", prediction: "player1", amountLamports: 2_450_000_000 });
+  store.createBet({
+    matchId: match1.matchId,
+    wallet: "Whale1...AAA",
+    prediction: "player1",
+    amountLamports: 8_000_000_000,
+  });
+  store.createBet({
+    matchId: match1.matchId,
+    wallet: "Whale2...BBB",
+    prediction: "player2",
+    amountLamports: 4_000_000_000,
+  });
+  store.createBet({
+    matchId: match1.matchId,
+    wallet: "Trader...CCC",
+    prediction: "player1",
+    amountLamports: 2_450_000_000,
+  });
   matchIds.push(match1.matchId);
 
   // Match 2: Scheduled match (betting open, not started)
@@ -266,7 +281,12 @@ export function seedDemoData() {
     lockTime: Math.floor(Date.now() / 1000) + 7200,
   });
   store.addMove(match2.matchId, { player: "player1", position: 4 });
-  store.createBet({ matchId: match2.matchId, wallet: "Bot1...DDD", prediction: "player1", amountLamports: 5_000_000_000 });
+  store.createBet({
+    matchId: match2.matchId,
+    wallet: "Bot1...DDD",
+    prediction: "player1",
+    amountLamports: 5_000_000_000,
+  });
   matchIds.push(match2.matchId);
 
   // Match 3: Intense mid-game
@@ -291,8 +311,18 @@ export function seedDemoData() {
   store.addMove(match3.matchId, { player: "player2", position: 7 });
   store.addMove(match3.matchId, { player: "player1", position: 4 });
   store.addMove(match3.matchId, { player: "player2", position: 2 });
-  store.createBet({ matchId: match3.matchId, wallet: "Pro1...EEE", prediction: "player2", amountLamports: 3_500_000_000 });
-  store.createBet({ matchId: match3.matchId, wallet: "Pro2...FFF", prediction: "player1", amountLamports: 4_502_500_000 });
+  store.createBet({
+    matchId: match3.matchId,
+    wallet: "Pro1...EEE",
+    prediction: "player2",
+    amountLamports: 3_500_000_000,
+  });
+  store.createBet({
+    matchId: match3.matchId,
+    wallet: "Pro2...FFF",
+    prediction: "player1",
+    amountLamports: 4_502_500_000,
+  });
   matchIds.push(match3.matchId);
 
   // Match 4: Mega pool
@@ -311,7 +341,12 @@ export function seedDemoData() {
   });
   store.addMove(match4.matchId, { player: "player1", position: 4 });
   store.addMove(match4.matchId, { player: "player2", position: 0 });
-  store.createBet({ matchId: match4.matchId, wallet: "Diamond...GGG", prediction: "player1", amountLamports: 12_500_000_000 });
+  store.createBet({
+    matchId: match4.matchId,
+    wallet: "Diamond...GGG",
+    prediction: "player1",
+    amountLamports: 12_500_000_000,
+  });
   matchIds.push(match4.matchId);
 
   // Match 5: Quick match
@@ -335,9 +370,24 @@ export function seedDemoData() {
   store.addMove(match5.matchId, { player: "player2", position: 3 });
   store.addMove(match5.matchId, { player: "player1", position: 1 });
   store.addMove(match5.matchId, { player: "player2", position: 2 });
-  store.createBet({ matchId: match5.matchId, wallet: "Speed1...HHH", prediction: "player1", amountLamports: 1_800_000_000 });
-  store.createBet({ matchId: match5.matchId, wallet: "Speed2...III", prediction: "player2", amountLamports: 2_200_000_000 });
-  store.createBet({ matchId: match5.matchId, wallet: "Speed3...JJJ", prediction: "player1", amountLamports: 1_500_000_000 });
+  store.createBet({
+    matchId: match5.matchId,
+    wallet: "Speed1...HHH",
+    prediction: "player1",
+    amountLamports: 1_800_000_000,
+  });
+  store.createBet({
+    matchId: match5.matchId,
+    wallet: "Speed2...III",
+    prediction: "player2",
+    amountLamports: 2_200_000_000,
+  });
+  store.createBet({
+    matchId: match5.matchId,
+    wallet: "Speed3...JJJ",
+    prediction: "player1",
+    amountLamports: 1_500_000_000,
+  });
   matchIds.push(match5.matchId);
 
   console.log(`🎲 Created ${matchIds.length} demo matches! Ready for betting!`);

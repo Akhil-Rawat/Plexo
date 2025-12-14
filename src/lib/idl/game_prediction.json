@@ -1,0 +1,369 @@
+{
+    "version": "0.1.0",
+    "name": "game_prediction",
+    "instructions": [
+        {
+            "name": "createPool",
+            "accounts": [
+                {
+                    "name": "pool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "vault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "playerPrizeVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "admin",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "tokenMint",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "playerA",
+                    "type": "publicKey"
+                },
+                {
+                    "name": "playerB",
+                    "type": "publicKey"
+                },
+                {
+                    "name": "matchId",
+                    "type": "publicKey"
+                }
+            ]
+        },
+        {
+            "name": "placeBet",
+            "accounts": [
+                {
+                    "name": "pool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "vault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "bettor",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "bettorAta",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "bet",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "side",
+                    "type": "u8"
+                },
+                {
+                    "name": "amount",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "closePool",
+            "accounts": [
+                {
+                    "name": "pool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "admin",
+                    "isMut": false,
+                    "isSigner": true
+                }
+            ],
+            "args": []
+        },
+        {
+            "name": "settlePool",
+            "accounts": [
+                {
+                    "name": "pool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "vault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "feeTreasury",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "playerPrizeVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "admin",
+                    "isMut": false,
+                    "isSigner": true
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "result",
+                    "type": "u8"
+                },
+                {
+                    "name": "feeBps",
+                    "type": "u16"
+                },
+                {
+                    "name": "playerShareBps",
+                    "type": "u16"
+                }
+            ]
+        },
+        {
+            "name": "claimSpectatorWinnings",
+            "accounts": [
+                {
+                    "name": "pool",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "vault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "bet",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "bettor",
+                    "isMut": false,
+                    "isSigner": true
+                },
+                {
+                    "name": "bettorAta",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": []
+        },
+        {
+            "name": "claimPlayerPrize",
+            "accounts": [
+                {
+                    "name": "pool",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "playerPrizeVault",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "player",
+                    "isMut": false,
+                    "isSigner": true
+                },
+                {
+                    "name": "playerAta",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "tokenProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": []
+        }
+    ],
+    "accounts": [
+        {
+            "name": "Pool",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "playerA",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "playerB",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "matchId",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "admin",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "tokenMint",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "vault",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "playerPrizeVault",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "vaultBump",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "playerPrizeVaultBump",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "totalForA",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "totalForB",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "isOpen",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "isSettled",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "result",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "winnerPool",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "distributable",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "feeAmount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "playerPrizeAmount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "playerPrizeClaimed",
+                        "type": "bool"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Bet",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "bettor",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "side",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "pool",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "claimed",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -11,6 +11,22 @@ export const PLEXO_PROGRAM_ID = new PublicKey(
   process.env.NEXT_PUBLIC_PLEXO_PROGRAM_ID || "11111111111111111111111111111111"
 );
 
+// Prediction Pool Program ID (from anchor program)
+export const PREDICTION_POOL_PROGRAM_ID = new PublicKey(
+  "DJzMFANyRmYriK61eXx7CkSUfHhmXsyTnHzWmxhRAQt9"
+);
+
+// SPL Token Mint for betting (use USDC or SOL wrapped token on devnet)
+export const BETTING_TOKEN_MINT = new PublicKey(
+  process.env.NEXT_PUBLIC_BETTING_TOKEN_MINT ||
+    "So11111111111111111111111111111111111111112" // Wrapped SOL
+);
+
+// Fee Treasury for platform fees
+export const FEE_TREASURY = new PublicKey(
+  process.env.NEXT_PUBLIC_FEE_TREASURY || "11111111111111111111111111111111" // Replace with actual treasury
+);
+
 // Adapter mode: 'mock' or 'devnet'
 export const ADAPTER_MODE = (process.env.NEXT_PUBLIC_ADAPTER_MODE || "mock") as
   | "mock"
